@@ -4,7 +4,6 @@ fuzzcan: src/*h src/*c Makefile
 		src/kcov.c \
 		src/forksrv.c \
 		src/siphash.c \
-		src/namespace.c \
 		src/fuzzcan.c \
 		-o $@
 
