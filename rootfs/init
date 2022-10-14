@@ -10,7 +10,7 @@ mount -t sysfs none /sys
 mount -t debugfs none /sys/kernel/debug
 
 #disable kernel base aslr
-echo 0 > /proc/sys/kernel/randomize_va_space
+#echo 0 > /proc/sys/kernel/randomize_va_space
 
 # Do your stuff here.
 echo "This script just runs fuzzcan"

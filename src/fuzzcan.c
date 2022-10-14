@@ -130,7 +130,8 @@ int main(int argc, char **argv)
 	uint8_t *afl_area_ptr = forksrv_area_ptr(forksrv);
 
 	struct kcov *kcov = NULL;
-	uint64_t *kcov_cover_buf = NULL;
+	uint64_t *kcov_cover_buf = NULL; /* where the kcov measurements reside*/
+	uint64_t kcov_n; /* how many kcov measurements */
 	if (state->no_kcov == 0) {
 		kcov = kcov_new();
 		kcov_cover_buf = kcov_cover(kcov);
@@ -185,12 +186,18 @@ int main(int argc, char **argv)
 		int kcov_len = 0;
 
 
+		/* reset number of measurements */
+		__atomic_store_n(&kcov_cover_buf[0], 0, __ATOMIC_RELAXED);
 		/* START coverage collection on the current task. */
 		if (kcov) {
 			kcov_enable(kcov);
 		}
 
 		can_up_down();
+		/*read and print coverage*/
+		kcov_n = __atomic_load_n(&kcov_cover_buf[0], __ATOMIC_RELAXED);
+		for (uint64_t i = 0; i < kcov_n; i++)
+			printf("0x%lx\n", kcov_cover_buf[i + 1]);
 
 		/* STOP coverage */
 		if (kcov) {

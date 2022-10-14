@@ -1,11 +1,17 @@
+# will compile a fuzzcan shim and place it
+# in the rootfs dir.
+
 fuzzcan: src/*h src/*c Makefile
-	gcc -g -O2 -Wall -Wextra \
+	gcc -static -g -O2 -Wall -Wextra \
 		src/utils.c \
 		src/kcov.c \
 		src/forksrv.c \
 		src/siphash.c \
 		src/fuzzcan.c \
-		-o $@
+		-o rootfs/bin/$@
+
+rootfs: fuzzcan
+	./mkrootfs.sh
 
 .PHONY: format
 format:
