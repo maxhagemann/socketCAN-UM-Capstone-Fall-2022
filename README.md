@@ -1,4 +1,4 @@
-Totally Stolen from: A gentle introduction to Linux Kernel fuzzing
+No Longer Totally Stolen from: A gentle introduction to Linux Kernel fuzzing
 =============================================
 
 Requirements
