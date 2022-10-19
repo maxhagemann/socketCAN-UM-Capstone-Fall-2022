@@ -49,3 +49,9 @@ Save it and run this file through addr2line:
 
 (^^^ careful! .not the bzImage that is in kernelsrc/arch/x86_64/boot.
 The vmlinux (the uncompressed pure kernel binary. is just under kernelsrc/)
+
+To propely quit qemu:
+
+	pkill -9 qemu
+	
+
