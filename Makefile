@@ -8,11 +8,16 @@ fuzzcan: src/*h src/*c Makefile
 		src/forksrv.c \
 		src/siphash.c \
 		src/fuzzcan.c \
-		-o rootfs/bin/$@
+		-o $@
 
 rootfs: fuzzcan
 	./mkrootfs.sh
+	cp fuzzcan rootfs/bin/
 
 .PHONY: format
 format:
 	clang-format -i src/*.c src/*.h
+
+clean:
+	rm fuzzcan;
+	rm -rf rootfs/bin/fuzzcan
