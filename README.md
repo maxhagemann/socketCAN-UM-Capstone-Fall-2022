@@ -13,7 +13,7 @@ Download kernel tar from: https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.1
 
 Untar, run this script to add KCOV instrument for code coverage before building new kernel:
 
-find net -name Makefile | xargs -L1 -I {} bash -c 'echo "KCOV_INSTRUMENT := y" >> {}'
+	find net -name Makefile | xargs -L1 -I {} bash -c 'echo "KCOV_INSTRUMENT := y" >> {}'
 
 Before compiling, replace the .config file in the Linux source dir with the included config
 file from the confs directory, be sure it is renamed correctly to ".config".
@@ -21,7 +21,9 @@ file from the confs directory, be sure it is renamed correctly to ".config".
 Compile the new Linux kernel with this config file.
 
 To create the initird
+
 	make rootfs
+
 should build fuzzcan, place it in the initramfs and 
 then create a new initramfs at the current directory.
 
@@ -31,11 +33,9 @@ Running
 
 Launch qemu:
 
-qemu-system-x86_64 -kernel /path/to/bzImage -initrd /path/tofuzzcan-initramfs.cpio.gz \
- -append "root=/dev/ram0 rootfstype=ramfs init=/init console=ttyS0" -net nic,model=rtl8139 \
- -net user -m 2048M --nographic
-
-(^ ensure there are no unnecessary returns in the command before running)
+	qemu-system-x86_64 -kernel /path/to/bzImage -initrd /path/tofuzzcan-initramfs.cpio.gz \ 
+	-append "root=/dev/ram0 rootfstype=ramfs init=/init console=ttyS0" -net nic,model=rtl8139 \
+ 	-net user -m 2048M --nographic
 
 Run fuzzcan with: 
 
