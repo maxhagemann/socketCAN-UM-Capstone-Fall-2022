@@ -39,5 +39,7 @@ You may have to press "enter" again after executing. This should yield a stream 
 To view these in user format: create a text file, copy the data stream and paste into this file.
 Save it and run this file through addr2line:
 
-cat output_file | addr2line -e /path/to/vmlinux (careful! .not the bzImage that is in kernelsrc/arch/x86_64/boot.
+cat output_file | addr2line -e /path/to/vmlinux 
+
+(^^^ careful! .not the bzImage that is in kernelsrc/arch/x86_64/boot.
 The vmlinux (the uncompressed pure kernel binary. is just under kernelsrc/)
