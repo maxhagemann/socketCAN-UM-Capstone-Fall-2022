@@ -27,6 +27,8 @@ To create the initird
 should build fuzzcan, place it in the initramfs and 
 then create a new initramfs at the current directory.
 
+XXX: compile afl++ statically and have make rootfs copy its binary in the rootfs before mkrootfs
+
 
 Running
 ---------------
@@ -46,6 +48,9 @@ To view these in user format: create a text file, copy the data stream and paste
 Save it and run this file through addr2line:
 
 	cat output_file | addr2line -e /path/to/vmlinux 
+
+
+XXX: to run afl in the vm run ./afl-fuzz -i inp -o out -m 1024 -t 4000 -- ./bin/fuzzcan
 
 (^^^ careful! .not the bzImage that is in kernelsrc/arch/x86_64/boot.
 The vmlinux (the uncompressed pure kernel binary. is just under kernelsrc/)

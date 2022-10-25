@@ -44,23 +44,61 @@ static void usage(const char *command)
 }
 
 void
-can_up_down()
+can_up_down(char *finp)
 {
 	int sock;
 	struct ifreq ifr;
+	struct sockaddr_can addr;
+	struct can_frame frame;
+	canid_t cid;
 
-	if ((sock = socket(PF_CAN, SOCK_RAW, CAN_RAW)) < 0) {
+	/* 1 byte to fuzz the third arg of socket */
+	/* docu says can either be CAN_RAW or BCM (broadcast) */
+	if ((sock = socket(PF_CAN, SOCK_RAW, finp[0])) < 0) { /* make the socket */
 		fprintf(stderr, "CAN't CAN Socket");
-		exit(-1);
+		return;
 	}
-	strcpy(ifr.ifr_name, "vcan0" );
+	strcpy(ifr.ifr_name, "vcan0" ); /* create netif named appropriately for can */
 	printf("[can] interface up\n");
 	/* mark flag up */
-	ifr.ifr_flags |= IFF_UP;
+	ifr.ifr_flags |= IFF_UP; /* bring it up */
 	ioctl(sock, SIOCSIFFLAGS, &ifr);
 
+	memset(&addr, 0, sizeof(addr));
+	/* 1 byte for the can_family */
+	/* docu says it can be AF_CAN */
+	addr.can_family = finp[1];
+	/* 1 byte for the ifr.ifindex */
+	/* docu says to have that be the interface we brought up */
+	addr.can_ifindex = finp[2];
+
+	if (bind(sock, (struct sockaddr *)&addr, sizeof(addr)) < 0) { /* bind the socket to the if */
+		fprintf(stderr, "CAN't bind");
+		return;
+	}
+
+	/* craft a fuzzy can msg */
+	/* 4 bytes for the can id */
+	memcpy(&cid, finp+3, 4); /* copy 4 fuzzy bytes to where cid lives */
+	frame.can_id = cid;
+	/* 1 byte for the dlc which is supposedly the can msg length */
+	frame.can_dlc = finp[7];
+	/* 1 byte for a padding field */
+	frame.__pad = finp[8];
+	/* 1 byte for a reserved (res0) field */
+	frame.__res0 = finp[9];
+	/* 8 bytes for the message contents */
+	memcpy(frame.data, finp+10, 8);
+
+	/* send the message */
+	if (write(sock, &frame, sizeof(struct can_frame)) != sizeof(struct can_frame)) {
+		fprintf(stderr, "write");
+		return;
+	}
+
+
 	/* mark flag down */
-	ifr.ifr_flags &= ~IFF_UP;
+	ifr.ifr_flags &= ~IFF_UP; /* bring the interface down */
 	ioctl(sock, SIOCSIFFLAGS, &ifr);
 	printf("[can] interface down\n");
 }
@@ -193,11 +231,13 @@ int main(int argc, char **argv)
 			kcov_enable(kcov);
 		}
 
-		can_up_down();
-		/*read and print coverage*/
+		can_up_down(buf);
+		/* uncomment to read and print coverage*/
+		/*
 		kcov_n = __atomic_load_n(&kcov_cover_buf[0], __ATOMIC_RELAXED);
 		for (uint64_t i = 0; i < kcov_n; i++)
 			printf("0x%lx\n", kcov_cover_buf[i + 1]);
+		*/
 
 		/* STOP coverage */
 		if (kcov) {
