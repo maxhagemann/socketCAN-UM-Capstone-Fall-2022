@@ -8,6 +8,7 @@
 
 #include <linux/can.h>
 #include <linux/can/raw.h>
+#include <linux/can/bcm.h>
 #include <net/if.h>
 #include <sys/socket.h>
 #include <sys/ioctl.h>
@@ -46,11 +47,21 @@ static void usage(const char *command)
 void
 can_up_down(char *finp)
 {
-	int sock;
+	int sock, sockbcm;
+	int nbytes;
 	struct ifreq ifr;
 	struct sockaddr_can addr;
-	struct can_frame frame;
+	struct can_frame frame, rcvframe;
+	struct can_filter rfilter[1];
 	canid_t cid;
+	canid_t filter_cid;
+	struct { /* bcm message to the bcm socket */
+		struct bcm_msg_head msg_head;
+	        struct can_frame frame[1];
+	} msg;
+	unsigned char candata[8];
+
+
 
 	/* 1 byte to fuzz the third arg of socket */
 	/* docu says can either be CAN_RAW or BCM (broadcast) */
@@ -90,12 +101,39 @@ can_up_down(char *finp)
 	/* 8 bytes for the message contents */
 	memcpy(frame.data, finp+10, 8);
 
+	if ((sockbcm = socket(PF_CAN, SOCK_RAW, CAN_BCM)) < 0) { /* make a broadcast control socket */
+		fprintf(stderr, "CAN't CAN BCM Socket");
+		return;
+	}
+	/* connect the bcm socket, it says in docu that you can't bind it */
+	connect(sockbcm, (struct sockaddr *)&addr, sizeof(addr));
+
+	msg.msg_head.opcode  = finp[19];
+	msg.msg_head.can_id  = finp[20];
+	msg.msg_head.flags   = finp[21];
+	msg.msg_head.nframes = finp[22];
+	memcpy(msg.frame, finp+23, 8);
+
+	write(sockbcm, &msg, sizeof(msg));
+
+	memcpy(&filter_cid, finp+32, 4); /* copy 4 fuzzy bytes to where filter_cid lives */
+	rfilter[0].can_id   = filter_cid;
+	rfilter[0].can_mask = finp[36];
+
+	setsockopt(sock, SOL_CAN_RAW, CAN_RAW_FILTER, &rfilter, sizeof(rfilter));
+
 	/* send the message */
 	if (write(sock, &frame, sizeof(struct can_frame)) != sizeof(struct can_frame)) {
 		fprintf(stderr, "write");
 		return;
 	}
 
+	/* read a can frame */
+	nbytes = read(sock, &rcvframe, sizeof(struct can_frame));
+	if (nbytes < 0) {
+		fprintf(stderr, "can raw socket read");
+       		return; 
+	}
 
 	/* mark flag down */
 	ifr.ifr_flags &= ~IFF_UP; /* bring the interface down */
