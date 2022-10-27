@@ -11,8 +11,8 @@ fuzzcan: src/*h src/*c Makefile
 		-o $@
 
 rootfs: fuzzcan
-	./mkrootfs.sh
 	cp fuzzcan rootfs/bin/
+	./mkrootfs.sh
 
 .PHONY: format
 format:
