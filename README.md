@@ -56,18 +56,20 @@ Launch qemu:
 	-device virtio-scsi-pci,id=scsi -device scsi-hd,drive=hd -drive file=/path/to/vmimg.raw,if=none,format=raw,id=hd
 	-append "root=/dev/ram0 rootfstype=ramfs init=/init console=ttyS0" -net nic,model=rtl8139 \
  	-net user -m 2048M --nographic
+(^^^ careful! .not the bzImage that is in kernelsrc/arch/x86_64/boot. ^^^
+The vmlinux (the uncompressed pure kernel binary. is just under kernelsrc/)
+
 
 To launch the fuzzer run
 
 	./afl-fuzz -i inp/ -o /mnt/out -- ./bin/fuzzcan
 
-
-You may have to press "enter" again after executing. This should yield a stream of hex pointers. 
+/* You may have to press "enter" again after executing. This should yield a stream of hex pointers. 
 To view these in user format: create a text file, copy the data stream and paste into this file.
 Save it and run this file through addr2line:
 
-	cat output_file | addr2line -e /path/to/vmlinux 
-
+	cat output_file | addr2line -e /path/to/vmlinux  
+*/
 
 Running AFL++:
 
@@ -75,12 +77,11 @@ to run afl in the vm run the following command:
 
 `./afl-fuzz -i inp -o out -m 1024 -t 4000 -- ./bin/fuzzcan` 
 
+
 if that doesn't seem to work for some reason, try this:
 
 `afl-fuzz -i inp/ -o out/ -- ./bin/fuzzcan`
 
-(^^^ careful! .not the bzImage that is in kernelsrc/arch/x86_64/boot.
-The vmlinux (the uncompressed pure kernel binary. is just under kernelsrc/)
 
 To propely quit qemu:
 
