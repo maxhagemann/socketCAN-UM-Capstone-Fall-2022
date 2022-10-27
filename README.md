@@ -22,7 +22,7 @@ Compile the new Linux kernel with this config file.
 
 To compile AFL++ statically, we can do it by using the following command
 	
-	`make STATIC=1 all`
+	make STATIC=1 all
 
 This should have the afl-fuzz binary ready. Copy that binary into rootfs **and then run `make rootfs` and `./mkrootfs.sh`**
 After having the fuzzcan-initramfs.cpio.gz file, the `/bin/` directory should have 3 things being afl-fuzz, fuzzcan, and busybox.
@@ -43,9 +43,11 @@ Running
 ---------------
 
 Make a 1G qemu raw img to save the fuzzing state
+
 	dd if=/dev/zero of=/path/to/vmimg.raw bs=1M count=1000 
 
 format it as ext3
+
 	mkfs.ext3 /path/to/vmimg.raw
 
 Launch qemu:
@@ -56,14 +58,9 @@ Launch qemu:
  	-net user -m 2048M --nographic
 
 To launch the fuzzer run
+
 	./afl-fuzz -i inp/ -o /mnt/out -- ./bin/fuzzcan
-	
 
-
-XXX: update the following or remove
-Run fuzzcan with: 
-
-	fuzzcan -r 
 
 You may have to press "enter" again after executing. This should yield a stream of hex pointers. 
 To view these in user format: create a text file, copy the data stream and paste into this file.
