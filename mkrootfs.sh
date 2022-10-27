@@ -4,7 +4,7 @@ mkdir -p dev
 mkdir -p proc
 mkdir -p sys
 mkdir -p tmp 
-mkdir -p mnt
+mkdir -p mnt/out
 mkdir -p usr
 mkdir -p usr/lib
 mkdir -p lib
@@ -30,6 +30,7 @@ sudo mknod dev/tty c 5 0
 sudo mknod dev/console c 5 1
 sudo mknod dev/ptmx c 5 2
 sudo mknod dev/ttyprintk c 5 3
+sudo mknod dev/sda b 8 0
 ln -s ../proc/self/fd fd
 ln -s ../proc/self/fd/0 stdin # process i/o
 ln -s ../proc/self/fd/1 stdout

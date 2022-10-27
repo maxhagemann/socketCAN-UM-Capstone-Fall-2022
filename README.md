@@ -33,12 +33,25 @@ XXX: compile afl++ statically and have make rootfs copy its binary in the rootfs
 Running
 ---------------
 
+Make a 1G qemu raw img to save the fuzzing state
+	dd if=/dev/zero of=/path/to/vmimg.raw bs=1M count=1000 
+
+format it as ext3
+	mkfs.ext3 /path/to/vmimg.raw
+
 Launch qemu:
 
 	qemu-system-x86_64 -kernel /path/to/bzImage -initrd /path/tofuzzcan-initramfs.cpio.gz \ 
+	-device virtio-scsi-pci,id=scsi -device scsi-hd,drive=hd -drive file=/path/to/vmimg.raw,if=none,format=raw,id=hd
 	-append "root=/dev/ram0 rootfstype=ramfs init=/init console=ttyS0" -net nic,model=rtl8139 \
  	-net user -m 2048M --nographic
 
+To launch the fuzzer run
+	./afl-fuzz -i inp/ -o /mnt/out -- ./bin/fuzzcan
+	
+
+
+XXX: update the following or remove
 Run fuzzcan with: 
 
 	fuzzcan -r 
