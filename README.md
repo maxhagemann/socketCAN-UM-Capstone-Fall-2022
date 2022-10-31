@@ -64,13 +64,6 @@ To launch the fuzzer run
 
 	./afl-fuzz -i inp/ -o /mnt/out -- ./bin/fuzzcan
 
-/* You may have to press "enter" again after executing. This should yield a stream of hex pointers. 
-To view these in user format: create a text file, copy the data stream and paste into this file.
-Save it and run this file through addr2line:
-
-	cat output_file | addr2line -e /path/to/vmlinux  
-*/
-
 Running AFL++:
 
 to run afl in the vm run the following command:
@@ -86,5 +79,23 @@ if that doesn't seem to work for some reason, try this:
 To propely quit qemu:
 
 	pkill -9 qemu
+
+
+
+
+
+
+
+
+OLD: output --> addr2line
+---------------
+
+/* You may have to press "enter" again after executing. This should yield a stream of hex pointers. 
+To view these in user format: create a text file, copy the data stream and paste into this file.
+Save it and run this file through addr2line:
+
+	cat output_file | addr2line -e /path/to/vmlinux  
+*/
+
 	
 
