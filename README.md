@@ -6,8 +6,10 @@ Requirements
 qemu-kvm, kernel development tools, static busybox, Linux kernel tar - this project uses 5.19.7.
 
 
-Compiling
+Setup
 --------------
+
+Kernel build: 
 
 Download kernel tar from: https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.19.7.tar.xz
 
@@ -20,9 +22,17 @@ file from the confs directory, be sure it is renamed correctly to ".config".
  
 Compile the new Linux kernel with this config file.
 
+AFL (American Fuzzy Lop) install and build:
+
+Follow the install and build directions here:
+
+https://github.com/AFLplusplus/AFLplusplus/blob/stable/docs/INSTALL.md
+
 To compile AFL++ statically, we can do it by using the following command
 	
 	make STATIC=1 all
+
+Setup fuzzcan, rootfs, etc:
 
 This should have the afl-fuzz binary ready. Copy that binary into rootfs **and then run `make rootfs` and `./mkrootfs.sh`**
 After having the fuzzcan-initramfs.cpio.gz file, the `/bin/` directory should have 3 things being afl-fuzz, fuzzcan, and busybox.
