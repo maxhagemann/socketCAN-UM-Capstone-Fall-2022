@@ -6,8 +6,10 @@ Requirements
 qemu-kvm, kernel development tools, static busybox, Linux kernel tar - this project uses 5.19.7.
 
 
-Compiling
+Setup
 --------------
+
+KERNEL BUILD: 
 
 Download kernel tar from: https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.19.7.tar.xz
 
@@ -20,9 +22,17 @@ file from the confs directory, be sure it is renamed correctly to ".config".
  
 Compile the new Linux kernel with this config file.
 
+AFL (American Fuzzy Lop) INSTALL AND BUILD:
+
+Follow the install and build directions here:
+
+https://github.com/AFLplusplus/AFLplusplus/blob/stable/docs/INSTALL.md
+
 To compile AFL++ statically, we can do it by using the following command
 	
 	make STATIC=1 all
+
+SETUP FUZZCAN, ROOTFS, ETC.:
 
 This should have the afl-fuzz binary ready. Copy that binary into rootfs **and then run `make rootfs` and `./mkrootfs.sh`**
 After having the fuzzcan-initramfs.cpio.gz file, the `/bin/` directory should have 3 things being afl-fuzz, fuzzcan, and busybox.
@@ -64,13 +74,6 @@ To launch the fuzzer run
 
 	./afl-fuzz -i inp/ -o /mnt/out -- ./bin/fuzzcan
 
-/* You may have to press "enter" again after executing. This should yield a stream of hex pointers. 
-To view these in user format: create a text file, copy the data stream and paste into this file.
-Save it and run this file through addr2line:
-
-	cat output_file | addr2line -e /path/to/vmlinux  
-*/
-
 Running AFL++:
 
 to run afl in the vm run the following command:
@@ -86,5 +89,23 @@ if that doesn't seem to work for some reason, try this:
 To propely quit qemu:
 
 	pkill -9 qemu
+
+
+
+
+
+
+
+
+OLD: output --> addr2line
+---------------
+
+/* You may have to press "enter" again after executing. This should yield a stream of hex pointers. 
+To view these in user format: create a text file, copy the data stream and paste into this file.
+Save it and run this file through addr2line:
+
+	cat output_file | addr2line -e /path/to/vmlinux  
+*/
+
 	
 
