@@ -78,12 +78,12 @@ Running AFL++:
 
 to run afl in the vm run the following command:
 
-`./afl-fuzz -i inp -o out -m 1024 -t 4000 -- ./bin/fuzzcan` 
+	./afl-fuzz -i inp -o out -m 1024 -t 4000 -- ./bin/fuzzcan 
 
 
 if that doesn't seem to work for some reason, try this:
 
-`afl-fuzz -i inp/ -o out/ -- ./bin/fuzzcan`
+	afl-fuzz -i inp/ -o out/ -- ./bin/fuzzcan
 
 
 To propely quit qemu:
