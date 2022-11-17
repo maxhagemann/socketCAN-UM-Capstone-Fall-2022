@@ -9,6 +9,10 @@ qemu-kvm, kernel development tools, static busybox, Linux kernel tar - this proj
 Setup
 --------------
 
+Install some dev tools:
+
+	sudo apt install libncurses-dev flex bison openssl libssl-dev dkms libelf-dev libudev-dev libpci-dev libiberty-dev autoconf
+	
 KERNEL BUILD: 
 
 Download kernel tar from: https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.19.7.tar.xz
@@ -20,7 +24,9 @@ Untar, run this script to add KCOV instrument for code coverage before building 
 Before compiling, replace the .config file in the Linux source dir with the included config
 file from the confs directory, be sure it is renamed correctly to ".config".
  
-Compile the new Linux kernel with this config file.
+Compile the new Linux kernel with this config file. From inside the linux untarred linux-5.19.7 folder:
+
+	make
 
 AFL (American Fuzzy Lop) INSTALL AND BUILD:
 
@@ -70,10 +76,6 @@ Launch qemu:
 The vmlinux (the uncompressed pure kernel binary. is just under kernelsrc/)
 
 
-To launch the fuzzer run
-
-	./afl-fuzz -i inp/ -o /mnt/out -- ./bin/fuzzcan
-
 Running AFL++:
 
 to run afl in the vm run the following command:
@@ -91,21 +93,6 @@ To propely quit qemu:
 	pkill -9 qemu
 
 
-
-
-
-
-
-
-OLD: output --> addr2line
----------------
-
-/* You may have to press "enter" again after executing. This should yield a stream of hex pointers. 
-To view these in user format: create a text file, copy the data stream and paste into this file.
-Save it and run this file through addr2line:
-
-	cat output_file | addr2line -e /path/to/vmlinux  
-*/
 
 	
 
