@@ -52,12 +52,6 @@ To create the initird
 should build fuzzcan, place it in the initramfs and 
 then create a new initramfs at the current directory.
 
-
-
-
-Running
----------------
-
 Make a 1G qemu raw img to save the fuzzing state
 
 	dd if=/dev/zero of=/path/to/vmimg.raw bs=1M count=1000 
@@ -65,6 +59,18 @@ Make a 1G qemu raw img to save the fuzzing state
 format it as ext3
 
 	mkfs.ext3 /path/to/vmimg.raw
+	
+Now mount it. Note that you will first need to make a directory as a mount point. Best do it in your working folder with
+	
+	mkdir <name of mount dir>
+
+And mount:
+	
+	sudo mount vmimg.raw /path/to/mount/dir
+
+
+Running
+---------------
 
 Launch qemu:
 
@@ -88,7 +94,7 @@ if that doesn't seem to work for some reason, try this:
 	afl-fuzz -i inp/ -o out/ -- ./bin/fuzzcan
 
 
-To propely quit qemu:
+To 'properly' quit qemu as the typical ctrl+c doesn't work here for some reason:
 
 	pkill -9 qemu
 
